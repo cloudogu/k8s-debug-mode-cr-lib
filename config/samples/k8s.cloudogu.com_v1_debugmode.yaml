@@ -1,0 +1,9 @@
+apiVersion: k8s.cloudogu.com.k8s.cloudogu.com/v1
+kind: DebugMode
+metadata:
+  labels:
+    app.kubernetes.io/name: k8s-debug-mode-cr-lib
+    app.kubernetes.io/managed-by: kustomize
+  name: debugmode-sample
+spec:
+  # TODO(user): Add fields here

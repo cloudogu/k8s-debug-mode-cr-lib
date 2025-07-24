@@ -1,0 +1,67 @@
+package v1
+
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type DebugModePhase string
+
+const (
+	DebugModeStandard  DebugModePhase = "DebugMode"
+	DebugModePending   DebugModePhase = "Pending"
+	DebugModeRunning   DebugModePhase = "Running"
+	DebugModeSucceeded DebugModePhase = "Succeeded"
+	DebugModeFailed    DebugModePhase = "Failed"
+	DebugModeUnknown   DebugModePhase = "Unknown"
+)
+
+// DebugModeSpec defines the desired state of DebugMode
+type DebugModeSpec struct {
+	DeactivateTimestamp metav1.Time `json:"deactivateTimestamp,omitempty"`
+	TargetLogLevel      string      `json:"targetLogLevel,omitempty"`
+}
+
+const (
+	ConditionLogLevelSet string = "LogLevelsSet"
+)
+
+// DebugModeStatus defines the observed state of DebugMode.
+type DebugModeStatus struct {
+	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+	// Important: Run "make" to regenerate code after modifying this file
+	Phase      DebugModePhase     `json:"phase,omitempty"`
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+
+// DebugMode is the Schema for the debugmodes API
+type DebugMode struct {
+	metav1.TypeMeta `json:",inline"`
+
+	// metadata is a standard object metadata
+	// +optional
+	metav1.ObjectMeta `json:"metadata,omitempty,omitzero"`
+
+	// spec defines the desired state of DebugMode
+	// +required
+	Spec DebugModeSpec `json:"spec"`
+
+	// status defines the observed state of DebugMode
+	// +optional
+	Status DebugModeStatus `json:"status,omitempty,omitzero"`
+}
+
+// +kubebuilder:object:root=true
+
+// DebugModeList contains a list of DebugMode
+type DebugModeList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []DebugMode `json:"items"`
+}
+
+func init() {
+	SchemeBuilder.Register(&DebugMode{}, &DebugModeList{})
+}
