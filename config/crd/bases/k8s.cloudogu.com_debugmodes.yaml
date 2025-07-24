@@ -4,7 +4,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  name: debugmodes.k8s.cloudogu.com.k8s.cloudogu.com
+  name: debugmodes.k8s.cloudogu.com
 spec:
   group: k8s.cloudogu.com.k8s.cloudogu.com
   names:
