@@ -4,15 +4,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type DebugModePhase string
+type StatusPhase string
 
 const (
-	DebugModeStandard  DebugModePhase = "DebugMode"
-	DebugModePending   DebugModePhase = "Pending"
-	DebugModeRunning   DebugModePhase = "Running"
-	DebugModeSucceeded DebugModePhase = "Succeeded"
-	DebugModeFailed    DebugModePhase = "Failed"
-	DebugModeUnknown   DebugModePhase = "Unknown"
+	DebugModeStatusSet             StatusPhase = "SetDebugMode"
+	DebugModeStatusWaitForRollback StatusPhase = "WaitForRollback"
+	DebugModeStatusRollback        StatusPhase = "Rollback"
+	DebugModeStatusCompleted       StatusPhase = "Completed"
 )
 
 // DebugModeSpec defines the desired state of DebugMode
@@ -29,7 +27,11 @@ const (
 type DebugModeStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-	Phase      DebugModePhase     `json:"phase,omitempty"`
+	// Phase defines the current general state the resource is in.
+	Phase StatusPhase `json:"phase,omitempty"`
+	// Errors contains error messages that accumulated during execution.
+	Errors string `json:"errors,omitempty"`
+	// Conditions are used to influence the Phase
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 

@@ -1,9 +1,19 @@
-apiVersion: k8s.cloudogu.com.k8s.cloudogu.com/v1
-kind: DebugMode
+apiVersion: v1
+kind: ConfigMap
 metadata:
+  name: debugmode-k8s-ces-control-activation-1-state
+  namespace: default
   labels:
-    app.kubernetes.io/name: k8s-debug-mode-cr-lib
-    app.kubernetes.io/managed-by: kustomize
-  name: debugmode-sample
-spec:
-  # TODO(user): Add fields here
+    debugmode.k8s.cloudogu.com/owner: k8s-ces-control-activation-1
+  ownerReferences:
+    - apiVersion: k8s.cloudogu.com/v1
+      kind: DebugMode
+      name: k8s-ces-control-activation-1
+      uid: <DEBUGMODE-UID>  # vom Controller dynamisch gesetzt
+      controller: true
+      blockOwnerDeletion: true
+data:
+  dogu/ldap: INFO
+  dogu/cas: WARN
+  component/k8s-blueprint-operator: DEBUG
+  component/ces-exporter: WARN
