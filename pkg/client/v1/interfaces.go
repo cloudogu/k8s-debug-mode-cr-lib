@@ -2,27 +2,45 @@ package v1
 
 import (
 	"context"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/watch"
 
-	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/api/v1"
 )
+
+type DebugModeV1Interface interface {
+	DebugMode(namespace string) DebugModeInterface
+}
 
 type DebugModeInterface interface {
 	// Create takes the representation of a debugMode and creates it.  Returns the server's representation of the debugMode, and an error, if there is any.
-	Create(ctx context.Context, debugMode *v1., opts metav1.CreateOptions) (*v1.debugMode, error)
+	Create(ctx context.Context, debugMode *v1.DebugMode, opts metav1.CreateOptions) (result *v1.DebugMode, err error)
 	// Update takes the representation of a debugMode and updates it. Returns the server's representation of the debugMode, and an error, if there is any.
-	Update(ctx context.Context, debugMode *v1.debugMode, opts metav1.UpdateOptions) (*v1.debugMode, error)
+	Update(ctx context.Context, debugMode *v1.DebugMode, opts metav1.UpdateOptions) (result *v1.DebugMode, err error)
 	// UpdateStatus was generated because the type contains a Status member.
-	UpdateStatus(ctx context.Context, debugMode *v1.debugMode, opts metav1.UpdateOptions) (*v1.debugMode, error)
-	// UpdateStatusCreating sets the status of the debugMode to "creating".
-	UpdateStatusCreating(ctx context.Context, debugMode *v1.debugMode) (*v1.debugMode, error)
-	// UpdateStatusCreated sets the status of the debugMode to "created".
-	UpdateStatusCreated(ctx context.Context, debugMode *v1.debugMode) (*v1.debugMode, error)
-	// UpdateStatusDeleting sets the status of the debugMode to "deleting".
-	UpdateStatusDeleting(ctx context.Context, debugMode *v1.debugMode) (*v1.debugMode, error)
-	// UpdateStatusFailed sets the status of the debugMode to "failed".
-	UpdateStatusFailed(ctx context.Context, debugMode *v1.debugMode) (*v1.debugMode, error)
+	UpdateStatus(ctx context.Context, debugMode *v1.DebugMode, opts metav1.UpdateOptions) (result *v1.DebugMode, err error)
+	// UpdateStatusDebugModeSet sets the status of the debugMode to "creating".
+	UpdateStatusDebugModeSet(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusWaitForRollover sets the status of the debugMode to "created".
+	UpdateStatusWaitForRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusRollover sets the status of the debugMode to "deleting".
+	UpdateStatusRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusCompleted sets the status of the debugMode to "failed".
+	UpdateStatusCompleted(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// Delete takes name of the debugMode and deletes it. Returns an error if one occurs.
+	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
+	// Get takes name of the debugMode, and returns the corresponding debugMode object, and an error if there is any.
+	Get(ctx context.Context, name string, opts metav1.GetOptions) (result *v1.DebugMode, err error)
+	// List takes label and field selectors, and returns the list of debugModes that match those selectors.
+	List(ctx context.Context, opts metav1.ListOptions) (result *v1.DebugModeList, err error)
+	// Watch returns a watch.Interface that watches the requested debugModes.
+	Watch(ctx context.Context, opts metav1.ListOptions) (watch.Interface, error)
+	// Patch applies the patch and returns the patched debugMode.
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (result *v1.DebugMode, err error)
+	// AddFinalizer adds the given finalizer to the debugMode.
+	AddFinalizer(ctx context.Context, debugMode *v1.DebugMode, finalizer string) (*v1.DebugMode, error)
+	// RemoveFinalizer removes the given finalizer to the debugMode.
+	RemoveFinalizer(ctx context.Context, debugMode *v1.DebugMode, finalizer string) (*v1.DebugMode, error)
 }
