@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -603,6 +604,82 @@ func Test_DebugModeClient_RemoveFinalizer(t *testing.T) {
 		// then
 		require.Error(t, err)
 		assert.ErrorContains(t, err, "failed to remove finalizer finalizer2 from DebugMode")
+	})
+}
+
+func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
+	t.Run("success condition set to false", func(t *testing.T) {
+		// given
+		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
+
+		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			assert.Equal(t, http.MethodPut, request.Method)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
+
+			bytes, err := io.ReadAll(request.Body)
+			require.NoError(t, err)
+
+			createdDebugMode := &v1.DebugMode{}
+			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+
+			writer.Header().Add("content-type", "application/json")
+			_, err = writer.Write(bytes)
+
+			require.NoError(t, err)
+		}))
+
+		config := rest.Config{
+			Host: server.URL,
+		}
+
+		client, err := NewForConfig(&config)
+		require.NoError(t, err)
+		sClient := client.DebugMode("test")
+
+		// when
+		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, false)
+
+		// then
+		require.NoError(t, err)
+		require.Len(t, DebugMode.Status.Conditions, 1)
+		require.Equal(t, metav1.ConditionFalse, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionLogLevelSet).Status)
+	})
+
+	t.Run("success condition set to true", func(t *testing.T) {
+		// given
+		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
+
+		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			assert.Equal(t, http.MethodPut, request.Method)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
+
+			bytes, err := io.ReadAll(request.Body)
+			require.NoError(t, err)
+
+			createdDebugMode := &v1.DebugMode{}
+			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+
+			writer.WriteHeader(500)
+			writer.Header().Add("content-type", "application/json")
+			_, err = writer.Write(bytes)
+			require.NoError(t, err)
+		}))
+
+		config := rest.Config{
+			Host: server.URL,
+		}
+
+		client, err := NewForConfig(&config)
+		require.NoError(t, err)
+		sClient := client.DebugMode("test")
+
+		// when
+		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, true)
+
+		// then
+		require.Error(t, err)
+		require.Len(t, DebugMode.Status.Conditions, 1)
+		require.Equal(t, metav1.ConditionTrue, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionLogLevelSet).Status)
 	})
 }
 

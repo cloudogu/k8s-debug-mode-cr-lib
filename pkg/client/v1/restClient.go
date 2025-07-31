@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cloudogu/retry-lib/retry"
+	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes/scheme"
 	"time"
@@ -200,4 +201,27 @@ func (client *debugModeClient) RemoveFinalizer(ctx context.Context, debugMode *v
 	}
 
 	return result, err
+}
+
+func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool) (*v1.DebugMode, error) {
+	conditionStatus := metav1.ConditionFalse
+	if set == true {
+		conditionStatus = metav1.ConditionTrue
+	}
+
+	newCondition := metav1.Condition{
+		Type:               v1.ConditionLogLevelSet,
+		Status:             conditionStatus,
+		Reason:             "Initialized",
+		Message:            "Condition set to initialized",
+		LastTransitionTime: metav1.Now(),
+	}
+
+	meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
+	result, err := client.Update(ctx, debugMode, metav1.UpdateOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
+	}
+
+	return result, nil
 }
