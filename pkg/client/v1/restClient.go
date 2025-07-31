@@ -1,16 +1,16 @@
 package v1
 
 import (
-	context "context"
+	"context"
 	"fmt"
 	"github.com/cloudogu/retry-lib/retry"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes/scheme"
 	"time"
 
-	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/api/v1"
+	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	types "k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
@@ -127,7 +127,7 @@ func (client *debugModeClient) Get(ctx context.Context, name string, opts metav1
 	result = &v1.DebugMode{}
 	err = client.client.Get().
 		Namespace(client.ns).
-		Resource("supportArchives").
+		Resource("debugMode").
 		Name(name).
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Do(ctx).

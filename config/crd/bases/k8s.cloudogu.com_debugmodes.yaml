@@ -4,14 +4,14 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  name: debugmodes.k8s.cloudogu.com
+  name: debugMode.k8s.cloudogu.com
 spec:
   group: k8s.cloudogu.com.k8s.cloudogu.com
   names:
     kind: DebugMode
     listKind: DebugModeList
-    plural: debugmodes
-    singular: debugmode
+    plural: DebugModes
+    singular: DebugMode
   scope: Namespaced
   versions:
   - name: v1

@@ -17,7 +17,7 @@ import (
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/api/v1"
+	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 )
 
 var testCtx = context.Background()
@@ -27,7 +27,7 @@ func Test_DebugModeClient_Get(t *testing.T) {
 		// given
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, "GET", request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/testDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/testDebugMode", request.URL.Path)
 			assert.Equal(t, http.NoBody, request.Body)
 
 			writer.Header().Add("content-type", "application/json")
@@ -58,7 +58,7 @@ func Test_DebugModeClient_List(t *testing.T) {
 		// given
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodGet, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode", request.URL.Path)
 			assert.Equal(t, http.NoBody, request.Body)
 
 			writer.Header().Add("content-type", "application/json")
@@ -96,7 +96,7 @@ func Test_DebugModeClient_Create(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPost, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -132,7 +132,7 @@ func Test_DebugModeClient_Update(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/tocreate", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/tocreate", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -168,7 +168,7 @@ func Test_DebugModeClient_UpdateStatus(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/tocreate/status", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/tocreate/status", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -202,7 +202,7 @@ func Test_DebugModeClient_Delete(t *testing.T) {
 		// given
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodDelete, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/testDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/testDebugMode", request.URL.Path)
 
 			writer.Header().Add("content-type", "application/json")
 			writer.WriteHeader(200)
@@ -228,7 +228,7 @@ func Test_DebugModeClient_Patch(t *testing.T) {
 		// given
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPatch, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/testDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/testDebugMode", request.URL.Path)
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
 			assert.Equal(t, []byte("test"), bytes)
@@ -262,7 +262,7 @@ func Test_DebugModeClient_Watch(t *testing.T) {
 		// given
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, "GET", request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode", request.URL.Path)
 			assert.Equal(t, http.NoBody, request.Body)
 			assert.Equal(t, "labelSelector=test&timeout=5s&timeoutSeconds=5&watch=true", request.URL.RawQuery)
 
@@ -457,7 +457,7 @@ func Test_DebugModeClient_AddFinalizer(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -493,7 +493,7 @@ func Test_DebugModeClient_AddFinalizer(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -535,7 +535,7 @@ func Test_DebugModeClient_RemoveFinalizer(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -573,7 +573,7 @@ func Test_DebugModeClient_RemoveFinalizer(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/myDebugMode", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -610,14 +610,14 @@ func mockClientForStatusUpdates(t *testing.T, expectedDebugMode *v1.DebugMode, e
 
 	failGetDebugMode := func(writer http.ResponseWriter, request *http.Request) {
 		assert.Equal(t, http.MethodGet, request.Method)
-		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/%s", expectedDebugMode.Name), request.URL.Path)
+		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/%s", expectedDebugMode.Name), request.URL.Path)
 
 		writer.WriteHeader(500)
 	}
 
 	assertGetDebugModeRequest := func(writer http.ResponseWriter, request *http.Request) {
 		assert.Equal(t, http.MethodGet, request.Method)
-		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/%s", expectedDebugMode.Name), request.URL.Path)
+		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/%s", expectedDebugMode.Name), request.URL.Path)
 
 		DebugModeJson, err := json.Marshal(expectedDebugMode)
 		require.NoError(t, err)
@@ -629,7 +629,7 @@ func mockClientForStatusUpdates(t *testing.T, expectedDebugMode *v1.DebugMode, e
 
 	assertUpdateStatusRequest := func(writer http.ResponseWriter, request *http.Request) {
 		assert.Equal(t, http.MethodPut, request.Method)
-		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/%s/status", expectedDebugMode.Name), request.URL.Path)
+		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/%s/status", expectedDebugMode.Name), request.URL.Path)
 
 		bytes, err := io.ReadAll(request.Body)
 		require.NoError(t, err)
@@ -646,7 +646,7 @@ func mockClientForStatusUpdates(t *testing.T, expectedDebugMode *v1.DebugMode, e
 
 	conflictUpdateStatusRequest := func(writer http.ResponseWriter, request *http.Request) {
 		assert.Equal(t, http.MethodPut, request.Method)
-		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/DebugMode/%s/status", expectedDebugMode.Name), request.URL.Path)
+		assert.Equal(t, fmt.Sprintf("/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode/%s/status", expectedDebugMode.Name), request.URL.Path)
 
 		writer.WriteHeader(409)
 	}

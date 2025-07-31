@@ -7,7 +7,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/api/v1"
+	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 )
 
 type DebugModeV1Interface interface {

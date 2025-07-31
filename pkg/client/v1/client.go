@@ -6,7 +6,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 
-	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/api/v1"
+	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 )
 
 // client wraps the rest.Interface to use as a restClient for the component client.
