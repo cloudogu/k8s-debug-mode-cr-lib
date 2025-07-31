@@ -27,7 +27,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/cloudogu/k8s-debug-mode-cr-lib/test/utils"
+	"github.com/cloudogu/k8s-debug-mode-cr-lib/pkg/test/utils"
 )
 
 // namespace where the project is deployed in
