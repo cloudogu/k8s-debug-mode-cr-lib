@@ -1,4 +1,4 @@
-# k8s-support-archive-operator
+# k8s-debug-mode-cr-lib
 Operator for handling log levels in the Cloudogu EcoSystem
 
 ---
