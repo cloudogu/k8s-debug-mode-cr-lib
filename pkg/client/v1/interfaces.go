@@ -23,10 +23,10 @@ type DebugModeInterface interface {
 	UpdateStatus(ctx context.Context, debugMode *v1.DebugMode, opts metav1.UpdateOptions) (result *v1.DebugMode, err error)
 	// UpdateStatusDebugModeSet sets the status of the debugMode to "creating".
 	UpdateStatusDebugModeSet(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
-	// UpdateStatusWaitForRollover sets the status of the debugMode to "created".
-	UpdateStatusWaitForRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
-	// UpdateStatusRollover sets the status of the debugMode to "deleting".
-	UpdateStatusRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusWaitForRollback sets the status of the debugMode to "created".
+	UpdateStatusWaitForRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusRollback sets the status of the debugMode to "deleting".
+	UpdateStatusRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
 	// UpdateStatusCompleted sets the status of the debugMode to "failed".
 	UpdateStatusCompleted(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
 	// Delete takes name of the debugMode and deletes it. Returns an error if one occurs.

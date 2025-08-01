@@ -61,7 +61,7 @@ func (client *debugModeClient) UpdateStatus(ctx context.Context, debugMode *v1.D
 }
 
 func (client *debugModeClient) UpdateStatusCompleted(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
-	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusWaitForRollback)
+	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusCompleted)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (client *debugModeClient) UpdateStatusCompleted(ctx context.Context, debugM
 }
 
 func (client *debugModeClient) UpdateStatusDebugModeSet(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
-	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusWaitForRollback)
+	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusSet)
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +78,8 @@ func (client *debugModeClient) UpdateStatusDebugModeSet(ctx context.Context, deb
 	return debugMode, nil
 }
 
-func (client *debugModeClient) UpdateStatusRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
-	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusWaitForRollback)
+func (client *debugModeClient) UpdateStatusRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusRollback)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (client *debugModeClient) UpdateStatusRollover(ctx context.Context, debugMo
 	return debugMode, nil
 }
 
-func (client *debugModeClient) UpdateStatusWaitForRollover(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+func (client *debugModeClient) UpdateStatusWaitForRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
 	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusWaitForRollback)
 	if err != nil {
 		return nil, err

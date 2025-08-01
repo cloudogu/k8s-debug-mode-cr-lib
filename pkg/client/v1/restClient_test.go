@@ -291,7 +291,7 @@ func Test_DebugModeClient_UpdateStatusDebugModeSet(t *testing.T) {
 
 		// then
 		require.Error(t, err)
-		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get DebugMode.k8s.cloudogu.com myDebugMode)")
+		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get debugMode.k8s.cloudogu.com myDebugMode)")
 	})
 }
 
@@ -303,7 +303,7 @@ func Test_DebugModeClient_UpdateStatusWaitForRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusWaitForRollover(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusWaitForRollback(testCtx, DebugMode)
 
 		// then
 		require.NoError(t, err)
@@ -315,7 +315,7 @@ func Test_DebugModeClient_UpdateStatusWaitForRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusWaitForRollover(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusWaitForRollback(testCtx, DebugMode)
 
 		// then
 		require.NoError(t, err)
@@ -327,11 +327,11 @@ func Test_DebugModeClient_UpdateStatusWaitForRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusWaitForRollover(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusWaitForRollback(testCtx, DebugMode)
 
 		// then
 		require.Error(t, err)
-		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get DebugMode.k8s.cloudogu.com myDebugMode)")
+		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get debugMode.k8s.cloudogu.com myDebugMode)")
 	})
 }
 
@@ -343,7 +343,7 @@ func Test_DebugModeClient_UpdateStatusRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusDebugModeSet(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusRollback(testCtx, DebugMode)
 
 		// then
 		require.NoError(t, err)
@@ -355,7 +355,7 @@ func Test_DebugModeClient_UpdateStatusRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusDebugModeSet(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusRollback(testCtx, DebugMode)
 
 		// then
 		require.NoError(t, err)
@@ -367,11 +367,11 @@ func Test_DebugModeClient_UpdateStatusRollback(t *testing.T) {
 		sClient := mockClient.DebugMode("test")
 
 		// when
-		_, err := sClient.UpdateStatusDebugModeSet(testCtx, DebugMode)
+		_, err := sClient.UpdateStatusRollback(testCtx, DebugMode)
 
 		// then
 		require.Error(t, err)
-		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get DebugMode.k8s.cloudogu.com myDebugMode)")
+		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get debugMode.k8s.cloudogu.com myDebugMode)")
 	})
 }
 
@@ -411,7 +411,7 @@ func Test_DebugModeClient_UpdateStatusCompleted(t *testing.T) {
 
 		// then
 		require.Error(t, err)
-		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get DebugMode.k8s.cloudogu.com myDebugMode)")
+		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get debugMode.k8s.cloudogu.com myDebugMode)")
 	})
 }
 
@@ -487,7 +487,7 @@ func Test_DebugModeClient_AddFinalizer(t *testing.T) {
 
 		// then
 		require.Error(t, err)
-		assert.ErrorContains(t, err, "failed to add finalizer myFinalizer to DebugMode:")
+		assert.ErrorContains(t, err, "failed to add finalizer myFinalizer to debugMode:")
 	})
 }
 
@@ -567,7 +567,7 @@ func Test_DebugModeClient_RemoveFinalizer(t *testing.T) {
 
 		// then
 		require.Error(t, err)
-		assert.ErrorContains(t, err, "failed to remove finalizer finalizer2 from DebugMode")
+		assert.ErrorContains(t, err, "failed to remove finalizer finalizer2 from debugMode")
 	})
 }
 
