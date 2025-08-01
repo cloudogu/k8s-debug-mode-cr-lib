@@ -4,8 +4,7 @@ metadata:
   name: debugmodes.k8s.cloudogu.com
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  labels:
-  {{- include "helm-crd.labels" . | nindent 4 }}
+  labels: {{ include "helm-crd.labels" . | nindent 4 }}
 spec:
   group: k8s.cloudogu.com.k8s.cloudogu.com
   names:
