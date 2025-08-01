@@ -33,8 +33,6 @@ type DebugModeInterface interface {
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
 	// Get takes name of the debugMode, and returns the corresponding debugMode object, and an error if there is any.
 	Get(ctx context.Context, name string, opts metav1.GetOptions) (result *v1.DebugMode, err error)
-	// List takes label and field selectors, and returns the list of debugModes that match those selectors.
-	List(ctx context.Context, opts metav1.ListOptions) (result *v1.DebugModeList, err error)
 	// Watch returns a watch.Interface that watches the requested debugModes.
 	Watch(ctx context.Context, opts metav1.ListOptions) (watch.Interface, error)
 	// Patch applies the patch and returns the patched debugMode.

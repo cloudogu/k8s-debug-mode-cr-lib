@@ -136,24 +136,6 @@ func (client *debugModeClient) Get(ctx context.Context, name string, opts metav1
 	return
 }
 
-func (client *debugModeClient) List(ctx context.Context, opts metav1.ListOptions) (result *v1.DebugModeList, err error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-
-	result = &v1.DebugModeList{}
-	err = client.client.Get().
-		Namespace(client.ns).
-		Resource("debugMode").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Do(ctx).
-		Into(result)
-
-	return
-}
-
 func (client *debugModeClient) Watch(ctx context.Context, opts metav1.ListOptions) (watch.Interface, error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {

@@ -54,42 +54,6 @@ func Test_DebugModeClient_Get(t *testing.T) {
 	})
 }
 
-func Test_DebugModeClient_List(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		// given
-		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-			assert.Equal(t, http.MethodGet, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmode", request.URL.Path)
-			assert.Equal(t, http.NoBody, request.Body)
-
-			writer.Header().Add("content-type", "application/json")
-			DebugModeList := v1.DebugModeList{}
-			DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "testDebugMode", Namespace: "test"}}
-			DebugModeList.Items = append(DebugModeList.Items, *DebugMode)
-			DebugModeBytes, err := json.Marshal(DebugModeList)
-			require.NoError(t, err)
-			_, err = writer.Write(DebugModeBytes)
-			require.NoError(t, err)
-			writer.WriteHeader(200)
-		}))
-
-		config := rest.Config{
-			Host: server.URL,
-		}
-		client, err := NewForConfig(&config)
-		require.NoError(t, err)
-		sClient := client.DebugMode("test")
-
-		timeout := int64(5)
-
-		// when
-		_, err = sClient.List(testCtx, metav1.ListOptions{TimeoutSeconds: &timeout})
-
-		// then
-		require.NoError(t, err)
-	})
-}
-
 func Test_DebugModeClient_Create(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		// given
