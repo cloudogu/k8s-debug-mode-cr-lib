@@ -1,6 +1,6 @@
 module github.com/cloudogu/k8s-debug-mode-cr-lib
 
-go 1.24.0
+go 1.24.1
 
 require (
 	github.com/cloudogu/retry-lib v0.1.0
