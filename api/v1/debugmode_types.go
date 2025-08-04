@@ -57,6 +57,13 @@ type DebugMode struct {
 
 // +kubebuilder:object:root=true
 
+// DebugModeList contains a list of DebugMode
+type DebugModeList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []DebugMode `json:"items"`
+}
+
 func init() {
-	SchemeBuilder.Register(&DebugMode{})
+	SchemeBuilder.Register(&DebugMode{}, &DebugModeList{})
 }
