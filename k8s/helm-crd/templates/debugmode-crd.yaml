@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: k8s-debug-mode-cr-lib-crd
     k8s.cloudogu.com/component.name: k8s-debug-mode-operator-crd
 spec:
-  group: k8s.cloudogu.com.k8s.cloudogu.com
+  group: k8s.cloudogu.com
   names:
     kind: DebugMode
     listKind: DebugModeList

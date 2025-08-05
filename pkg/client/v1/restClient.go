@@ -25,7 +25,7 @@ func (client *debugModeClient) Create(ctx context.Context, debugMode *v1.DebugMo
 	result = &v1.DebugMode{}
 	err = client.client.Post().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(debugMode).
 		Do(ctx).
@@ -37,7 +37,7 @@ func (client *debugModeClient) Update(ctx context.Context, debugMode *v1.DebugMo
 	result = &v1.DebugMode{}
 	err = client.client.Put().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(debugMode.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(debugMode).
