@@ -25,7 +25,7 @@ func (client *debugModeClient) Create(ctx context.Context, debugMode *v1.DebugMo
 	result = &v1.DebugMode{}
 	err = client.client.Post().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(debugMode).
 		Do(ctx).
@@ -37,7 +37,7 @@ func (client *debugModeClient) Update(ctx context.Context, debugMode *v1.DebugMo
 	result = &v1.DebugMode{}
 	err = client.client.Put().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(debugMode.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(debugMode).
@@ -50,7 +50,7 @@ func (client *debugModeClient) UpdateStatus(ctx context.Context, debugMode *v1.D
 	result = &v1.DebugMode{}
 	err = client.client.Put().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(debugMode.Name).
 		SubResource("status").
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -117,7 +117,7 @@ func (client *debugModeClient) updateStatusWithRetry(ctx context.Context, debugM
 func (client *debugModeClient) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
 	return client.client.Delete().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(name).
 		Body(&opts).
 		Do(ctx).
@@ -128,7 +128,7 @@ func (client *debugModeClient) Get(ctx context.Context, name string, opts metav1
 	result = &v1.DebugMode{}
 	err = client.client.Get().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(name).
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Do(ctx).
@@ -144,7 +144,7 @@ func (client *debugModeClient) Watch(ctx context.Context, opts metav1.ListOption
 	opts.Watch = true
 	return client.client.Get().
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
 		Watch(ctx)
@@ -154,7 +154,7 @@ func (client *debugModeClient) Patch(ctx context.Context, name string, pt types.
 	result = &v1.DebugMode{}
 	err = client.client.Patch(pt).
 		Namespace(client.ns).
-		Resource("debugMode").
+		Resource("debugmodes").
 		Name(name).
 		SubResource(subresources...).
 		VersionedParams(&opts, scheme.ParameterCodec).
