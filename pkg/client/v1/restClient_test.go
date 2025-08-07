@@ -641,7 +641,7 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 		sClient := client.DebugMode("test")
 
 		// when
-		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, false)
+		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, false, "", "")
 
 		// then
 		require.NoError(t, err)
@@ -678,7 +678,7 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 		sClient := client.DebugMode("test")
 
 		// when
-		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, true)
+		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, true, "Test Msg", "Test Reason")
 
 		// then
 		require.Error(t, err)
