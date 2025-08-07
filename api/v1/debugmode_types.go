@@ -38,8 +38,7 @@ type DebugModeStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-
-// DebugMode is the Schema for the debugmodes API
+// +kubebuilder:validation:XValidation:rule="self.metadata.name == 'debug-mode'",message="Name of DebugMode singleton must always be 'debug-mode'"
 type DebugMode struct {
 	metav1.TypeMeta `json:",inline"`
 
