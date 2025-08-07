@@ -7,6 +7,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 	"time"
 
 	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
@@ -195,6 +196,8 @@ func (client *debugModeClient) RemoveFinalizer(ctx context.Context, debugMode *v
 }
 
 func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
+	logger := log.FromContext(ctx)
+
 	conditionStatus := metav1.ConditionFalse
 	if set == true {
 		conditionStatus = metav1.ConditionTrue
@@ -216,8 +219,11 @@ func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debu
 		LastTransitionTime: metav1.Now(),
 	}
 
-	meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
-	result, err := client.Update(ctx, debugMode, metav1.UpdateOptions{})
+	logger.Info("%v", newCondition)
+
+	changed := meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
+	logger.Info("changed: %v", changed)
+	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
 	}
