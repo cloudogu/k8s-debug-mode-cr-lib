@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.0] - 2025-08-07
+### Added
+- New phase 'Failed' to indicate a failed debug mode request cr
+- Make CR a singleton by using name rule in x-kubernetes-validation
+### Fixed
+- correct group name without doubled domain
+
 ## [v0.1.1] - 2025-08-05
 ### Fixed
 - Fixing Debugmode API, CRD and REST-client for proper debug-mode-operator usability.

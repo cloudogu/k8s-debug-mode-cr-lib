@@ -21,14 +21,16 @@ type DebugModeInterface interface {
 	Update(ctx context.Context, debugMode *v1.DebugMode, opts metav1.UpdateOptions) (result *v1.DebugMode, err error)
 	// UpdateStatus was generated because the type contains a Status member.
 	UpdateStatus(ctx context.Context, debugMode *v1.DebugMode, opts metav1.UpdateOptions) (result *v1.DebugMode, err error)
-	// UpdateStatusDebugModeSet sets the status of the debugMode to "creating".
+	// UpdateStatusDebugModeSet sets the status of the debugMode to "SetDebugMode".
 	UpdateStatusDebugModeSet(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
-	// UpdateStatusWaitForRollback sets the status of the debugMode to "created".
+	// UpdateStatusWaitForRollback sets the status of the debugMode to "WaitForRollback".
 	UpdateStatusWaitForRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
-	// UpdateStatusRollback sets the status of the debugMode to "deleting".
+	// UpdateStatusRollback sets the status of the debugMode to "Rollback".
 	UpdateStatusRollback(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
-	// UpdateStatusCompleted sets the status of the debugMode to "failed".
+	// UpdateStatusCompleted sets the status of the debugMode to "Completed".
 	UpdateStatusCompleted(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
+	// UpdateStatusFailed sets the status of the debugMode to "Failed".
+	UpdateStatusFailed(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
 	// Delete takes name of the debugMode and deletes it. Returns an error if one occurs.
 	Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error
 	// Get takes name of the debugMode, and returns the corresponding debugMode object, and an error if there is any.
