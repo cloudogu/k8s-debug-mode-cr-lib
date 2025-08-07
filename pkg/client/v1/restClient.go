@@ -96,6 +96,15 @@ func (client *debugModeClient) UpdateStatusWaitForRollback(ctx context.Context, 
 	return debugMode, nil
 }
 
+func (client *debugModeClient) UpdateStatusFailed(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+	debugMode, err := client.updateStatusWithRetry(ctx, debugMode, v1.DebugModeStatusFailed)
+	if err != nil {
+		return nil, err
+	}
+
+	return debugMode, nil
+}
+
 func (client *debugModeClient) updateStatusWithRetry(ctx context.Context, debugMode *v1.DebugMode, targetStatus v1.StatusPhase) (*v1.DebugMode, error) {
 	var resultDebugMode *v1.DebugMode
 	err := retry.OnConflict(func() error {

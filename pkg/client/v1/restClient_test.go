@@ -375,6 +375,46 @@ func Test_DebugModeClient_UpdateStatusRollback(t *testing.T) {
 	})
 }
 
+func Test_DebugModeClient_UpdateStatusFailed(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		// given
+		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
+		mockClient := mockClientForStatusUpdates(t, DebugMode, v1.DebugModeStatusFailed, false, false)
+		sClient := mockClient.DebugMode("test")
+
+		// when
+		_, err := sClient.UpdateStatusFailed(testCtx, DebugMode)
+
+		// then
+		require.NoError(t, err)
+	})
+	t.Run("success with retry", func(t *testing.T) {
+		// given
+		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
+		mockClient := mockClientForStatusUpdates(t, DebugMode, v1.DebugModeStatusFailed, true, false)
+		sClient := mockClient.DebugMode("test")
+
+		// when
+		_, err := sClient.UpdateStatusFailed(testCtx, DebugMode)
+
+		// then
+		require.NoError(t, err)
+	})
+	t.Run("fail on get DebugMode", func(t *testing.T) {
+		// given
+		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
+		mockClient := mockClientForStatusUpdates(t, DebugMode, v1.DebugModeStatusWaitForRollback, false, true)
+		sClient := mockClient.DebugMode("test")
+
+		// when
+		_, err := sClient.UpdateStatusFailed(testCtx, DebugMode)
+
+		// then
+		require.Error(t, err)
+		require.ErrorContains(t, err, "an error on the server (\"\") has prevented the request from succeeding (get debugmodes.k8s.cloudogu.com myDebugMode)")
+	})
+}
+
 func Test_DebugModeClient_UpdateStatusCompleted(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		// given

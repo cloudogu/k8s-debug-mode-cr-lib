@@ -11,6 +11,7 @@ const (
 	DebugModeStatusWaitForRollback StatusPhase = "WaitForRollback"
 	DebugModeStatusRollback        StatusPhase = "Rollback"
 	DebugModeStatusCompleted       StatusPhase = "Completed"
+	DebugModeStatusFailed          StatusPhase = "Failed"
 )
 
 // DebugModeSpec defines the desired state of DebugMode
