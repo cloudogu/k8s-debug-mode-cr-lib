@@ -44,5 +44,5 @@ type DebugModeInterface interface {
 	// RemoveFinalizer removes the given finalizer to the debugMode.
 	RemoveFinalizer(ctx context.Context, debugMode *v1.DebugMode, finalizer string) (*v1.DebugMode, error)
 	// AddOrUpdateLogLevelsSet sets the condition for the debugMode.
-	AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool) (*v1.DebugMode, error)
+	AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error)
 }
