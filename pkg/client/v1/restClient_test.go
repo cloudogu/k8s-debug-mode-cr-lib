@@ -618,7 +618,7 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
@@ -655,7 +655,7 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 			assert.Equal(t, http.MethodPut, request.Method)
-			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
 			bytes, err := io.ReadAll(request.Body)
 			require.NoError(t, err)
