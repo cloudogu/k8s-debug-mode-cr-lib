@@ -194,17 +194,25 @@ func (client *debugModeClient) RemoveFinalizer(ctx context.Context, debugMode *v
 	return result, err
 }
 
-func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool) (*v1.DebugMode, error) {
+func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
 	conditionStatus := metav1.ConditionFalse
 	if set == true {
 		conditionStatus = metav1.ConditionTrue
 	}
 
+	if reason == "" {
+		reason = "Initialized"
+	}
+
+	if msg == "" {
+		msg = "Condition set to initialized"
+	}
+
 	newCondition := metav1.Condition{
 		Type:               v1.ConditionLogLevelSet,
 		Status:             conditionStatus,
-		Reason:             "Initialized",
-		Message:            "Condition set to initialized",
+		Reason:             reason,
+		Message:            msg,
 		LastTransitionTime: metav1.Now(),
 	}
 

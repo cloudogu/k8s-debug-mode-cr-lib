@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.1] - 2025-08-07
+### Changed
+- pass message and reason to Condition helper
+
 ## [v0.2.0] - 2025-08-07
 ### Added
 - New phase 'Failed' to indicate a failed debug mode request cr
