@@ -219,10 +219,10 @@ func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debu
 		LastTransitionTime: metav1.Now(),
 	}
 
-	logger.Info("%v", newCondition)
+	logger.Info(fmt.Sprintf("%v", newCondition))
 
 	changed := meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
-	logger.Info("changed: %v", changed)
+	logger.Info(fmt.Sprintf("changed: %v", changed))
 	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
