@@ -4,20 +4,19 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  name: debugMode.k8s.cloudogu.com
+  name: debugmodes.k8s.cloudogu.com
 spec:
-  group: k8s.cloudogu.com.k8s.cloudogu.com
+  group: k8s.cloudogu.com
   names:
     kind: DebugMode
     listKind: DebugModeList
-    plural: DebugModes
-    singular: DebugMode
+    plural: debugmodes
+    singular: debugmode
   scope: Namespaced
   versions:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: DebugMode is the Schema for the debugmodes API
         properties:
           apiVersion:
             description: |-
@@ -49,6 +48,7 @@ spec:
             description: status defines the observed state of DebugMode
             properties:
               conditions:
+                description: Conditions are used to influence the Phase
                 items:
                   description: Condition contains details for one aspect of the current
                     state of this API Resource.
@@ -104,15 +104,23 @@ spec:
                   - type
                   type: object
                 type: array
+              errors:
+                description: Errors contains error messages that accumulated during
+                  execution.
+                type: string
               phase:
                 description: |-
                   INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
                   Important: Run "make" to regenerate code after modifying this file
+                  Phase defines the current general state the resource is in.
                 type: string
             type: object
         required:
         - spec
         type: object
+        x-kubernetes-validations:
+        - message: Name of DebugMode singleton must always be 'debug-mode'
+          rule: self.metadata.name == 'debug-mode'
     served: true
     storage: true
     subresources:
