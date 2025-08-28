@@ -6,7 +6,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     app: ces
-    app.kubernetes.io/name: k8s-debug-mode-cr-lib-crd
+    app.kubernetes.io/name: k8s-debug-mode-operator-crd
     k8s.cloudogu.com/component.name: k8s-debug-mode-operator-crd
 spec:
   group: k8s.cloudogu.com
