@@ -1,4 +1,6 @@
-ARTIFACT_ID=k8s-debug-mode-cr-lib
+PROJECT_NAME=k8s-debug-mode-cr-lib
+ARTIFACT_ID=k8s-debug-mode-operator-crd
+APPEND_CRD_SUFFIX=false
 VERSION=0.2.3
 GOTAG=1.24.1
 MAKEFILES_VERSION=10.2.0
