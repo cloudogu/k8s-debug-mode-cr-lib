@@ -15,7 +15,7 @@ type clientSet struct {
 	clientV1 v1.DebugModeV1Interface
 }
 
-// NewDebugModeClientSet creates a new instance of the support archive client set.
+// NewDebugModeClientSet creates a new instance of the debug mode client set.
 func NewDebugModeClientSet(config *rest.Config) (DebugModeEcosystemInterface, error) {
 	clientV1, err := v1.NewForConfig(config)
 	if err != nil {
@@ -27,7 +27,7 @@ func NewDebugModeClientSet(config *rest.Config) (DebugModeEcosystemInterface, er
 	}, nil
 }
 
-// DebugModeV1 returns the support archive v1 client.
+// DebugModeV1 returns the debug mode v1 client.
 func (cswc *clientSet) DebugModeV1() v1.DebugModeV1Interface {
 	return cswc.clientV1
 }

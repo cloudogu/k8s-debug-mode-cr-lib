@@ -10,7 +10,7 @@ import (
 )
 
 func TestNewDebugModeClientSet(t *testing.T) {
-	t.Run("should create new support archive client set", func(t *testing.T) {
+	t.Run("should create new debug mode client set", func(t *testing.T) {
 		// given
 		config := &rest.Config{}
 
@@ -21,7 +21,7 @@ func TestNewDebugModeClientSet(t *testing.T) {
 		require.NoError(t, err)
 		assert.NotEmpty(t, clientSet)
 	})
-	t.Run("should fail to create new support archive client for wrong config", func(t *testing.T) {
+	t.Run("should fail to create new debug mode client for wrong config", func(t *testing.T) {
 		// given
 		config := &rest.Config{
 			Host: "foo:/error",
