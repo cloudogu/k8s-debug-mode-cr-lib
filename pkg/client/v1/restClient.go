@@ -3,11 +3,12 @@ package v1
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/cloudogu/retry-lib/retry"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes/scheme"
-	"time"
 
 	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -195,11 +196,6 @@ func (client *debugModeClient) RemoveFinalizer(ctx context.Context, debugMode *v
 }
 
 func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
-	conditionStatus := metav1.ConditionFalse
-	if set == true {
-		conditionStatus = metav1.ConditionTrue
-	}
-
 	if reason == "" {
 		reason = "Initialized"
 	}
@@ -208,8 +204,29 @@ func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debu
 		msg = "Condition set to initialized"
 	}
 
+	return client.addOrUpdateCondition(ctx, v1.ConditionLogLevelSet, debugMode, set, msg, reason)
+}
+
+func (client *debugModeClient) AddOrUpdateFailed(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
+	if reason == "" {
+		reason = "Error"
+	}
+
+	if msg == "" {
+		msg = "Error handling debug-mode"
+	}
+
+	return client.addOrUpdateCondition(ctx, v1.ConditionFailed, debugMode, set, msg, reason)
+}
+
+func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, condition string, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
+	conditionStatus := metav1.ConditionFalse
+	if set == true {
+		conditionStatus = metav1.ConditionTrue
+	}
+
 	newCondition := metav1.Condition{
-		Type:               v1.ConditionLogLevelSet,
+		Type:               condition,
 		Status:             conditionStatus,
 		Reason:             reason,
 		Message:            msg,
