@@ -237,38 +237,55 @@ func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, conditi
 		LastTransitionTime: metav1.Now(),
 	}
 
-	_ = meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
-	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
-	if err != nil {
-		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
-	}
+	var resultDebugMode *v1.DebugMode
+	err := retry.OnConflict(func() error {
+		updatedDebugMode, err := client.Get(ctx, debugMode.GetName(), metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
 
-	return result, nil
+		_ = meta.SetStatusCondition(&updatedDebugMode.Status.Conditions, newCondition)
+		resultDebugMode, err = client.UpdateStatus(ctx, updatedDebugMode, metav1.UpdateOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
+		}
+		return nil
+	})
+
+	return resultDebugMode, err
 }
 
 func (client *debugModeClient) removeCondition(ctx context.Context, conditionType string, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
-
-	conditions := debugMode.Status.Conditions
-	resultConditions := conditions[:0]
-	removed := false
-	for _, c := range conditions {
-		if c.Type == conditionType {
-			removed = true
-			continue
+	var resultDebugMode *v1.DebugMode
+	err := retry.OnConflict(func() error {
+		updatedDebugMode, err := client.Get(ctx, debugMode.GetName(), metav1.GetOptions{})
+		if err != nil {
+			return err
 		}
-		resultConditions = append(resultConditions, c)
-	}
 
-	if !removed {
-		return debugMode, nil
-	}
+		conditions := debugMode.Status.Conditions
+		resultConditions := conditions[:0]
+		removed := false
+		for _, c := range conditions {
+			if c.Type == conditionType {
+				removed = true
+				continue
+			}
+			resultConditions = append(resultConditions, c)
+		}
 
-	debugMode.Status.Conditions = resultConditions
+		if !removed {
+			resultDebugMode = debugMode
+			return nil
+		}
 
-	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
-	if err != nil {
-		return nil, fmt.Errorf("failed to remove condition %s from debugMode: %w", conditionType, err)
-	}
+		debugMode.Status.Conditions = resultConditions
+		updatedDebugMode, err = client.UpdateStatus(ctx, updatedDebugMode, metav1.UpdateOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to remove condition %s from debugMode: %w", conditionType, err)
+		}
+		return nil
+	})
 
-	return result, nil
+	return resultDebugMode, err
 }
