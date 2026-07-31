@@ -48,4 +48,6 @@ type DebugModeInterface interface {
 	AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error)
 	// AddOrUpdateFailed sets the failed condition for the debugMode.
 	AddOrUpdateFailed(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error)
+	// RemoveFailed removes the failed condition from the debugMode.
+	RemoveFailed(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error)
 }

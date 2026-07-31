@@ -219,6 +219,10 @@ func (client *debugModeClient) AddOrUpdateFailed(ctx context.Context, debugMode 
 	return client.addOrUpdateCondition(ctx, v1.ConditionFailed, debugMode, set, msg, reason)
 }
 
+func (client *debugModeClient) RemoveFailed(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+	return client.removeCondition(ctx, v1.ConditionFailed, debugMode)
+}
+
 func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, condition string, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
 	conditionStatus := metav1.ConditionFalse
 	if set == true {
@@ -237,6 +241,33 @@ func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, conditi
 	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
+	}
+
+	return result, nil
+}
+
+func (client *debugModeClient) removeCondition(ctx context.Context, conditionType string, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+
+	conditions := debugMode.Status.Conditions
+	resultConditions := conditions[:0]
+	removed := false
+	for _, c := range conditions {
+		if c.Type == conditionType {
+			removed = true
+			continue
+		}
+		resultConditions = append(resultConditions, c)
+	}
+
+	if !removed {
+		return debugMode, nil
+	}
+
+	debugMode.Status.Conditions = resultConditions
+
+	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to remove condition %s from debugMode: %w", conditionType, err)
 	}
 
 	return result, nil
