@@ -3,11 +3,12 @@ package v1
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/cloudogu/retry-lib/retry"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes/scheme"
-	"time"
 
 	v1 "github.com/cloudogu/k8s-debug-mode-cr-lib/api/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -195,11 +196,6 @@ func (client *debugModeClient) RemoveFinalizer(ctx context.Context, debugMode *v
 }
 
 func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
-	conditionStatus := metav1.ConditionFalse
-	if set == true {
-		conditionStatus = metav1.ConditionTrue
-	}
-
 	if reason == "" {
 		reason = "Initialized"
 	}
@@ -208,19 +204,88 @@ func (client *debugModeClient) AddOrUpdateLogLevelsSet(ctx context.Context, debu
 		msg = "Condition set to initialized"
 	}
 
+	return client.addOrUpdateCondition(ctx, v1.ConditionLogLevelSet, debugMode, set, msg, reason)
+}
+
+func (client *debugModeClient) AddOrUpdateFailed(ctx context.Context, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
+	if reason == "" {
+		reason = "Error"
+	}
+
+	if msg == "" {
+		msg = "Error handling debug-mode"
+	}
+
+	return client.addOrUpdateCondition(ctx, v1.ConditionFailed, debugMode, set, msg, reason)
+}
+
+func (client *debugModeClient) RemoveFailed(ctx context.Context, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+	return client.removeCondition(ctx, v1.ConditionFailed, debugMode)
+}
+
+func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, condition string, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
+	conditionStatus := metav1.ConditionFalse
+	if set {
+		conditionStatus = metav1.ConditionTrue
+	}
+
 	newCondition := metav1.Condition{
-		Type:               v1.ConditionLogLevelSet,
+		Type:               condition,
 		Status:             conditionStatus,
 		Reason:             reason,
 		Message:            msg,
 		LastTransitionTime: metav1.Now(),
 	}
 
-	_ = meta.SetStatusCondition(&debugMode.Status.Conditions, newCondition)
-	result, err := client.UpdateStatus(ctx, debugMode, metav1.UpdateOptions{})
-	if err != nil {
-		return nil, fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
-	}
+	var resultDebugMode *v1.DebugMode
+	err := retry.OnConflict(func() error {
+		updatedDebugMode, err := client.Get(ctx, debugMode.GetName(), metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
 
-	return result, nil
+		_ = meta.SetStatusCondition(&updatedDebugMode.Status.Conditions, newCondition)
+		resultDebugMode, err = client.UpdateStatus(ctx, updatedDebugMode, metav1.UpdateOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to add or update condition %s to debugMode: %w", newCondition.Type, err)
+		}
+		return nil
+	})
+
+	return resultDebugMode, err
+}
+
+func (client *debugModeClient) removeCondition(ctx context.Context, conditionType string, debugMode *v1.DebugMode) (*v1.DebugMode, error) {
+	var resultDebugMode *v1.DebugMode
+	err := retry.OnConflict(func() error {
+		updatedDebugMode, err := client.Get(ctx, debugMode.GetName(), metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		conditions := debugMode.Status.Conditions
+		resultConditions := conditions[:0]
+		removed := false
+		for _, c := range conditions {
+			if c.Type == conditionType {
+				removed = true
+				continue
+			}
+			resultConditions = append(resultConditions, c)
+		}
+
+		if !removed {
+			resultDebugMode = debugMode
+			return nil
+		}
+
+		debugMode.Status.Conditions = resultConditions
+		updatedDebugMode, err = client.UpdateStatus(ctx, updatedDebugMode, metav1.UpdateOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to remove condition %s from debugMode: %w", conditionType, err)
+		}
+		return nil
+	})
+
+	return resultDebugMode, err
 }

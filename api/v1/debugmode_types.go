@@ -22,6 +22,7 @@ type DebugModeSpec struct {
 
 const (
 	ConditionLogLevelSet string = "LogLevelsSet"
+	ConditionFailed      string = "Failed"
 )
 
 // DebugModeStatus defines the observed state of DebugMode.
