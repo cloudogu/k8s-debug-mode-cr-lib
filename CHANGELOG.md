@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-09-10
+### Added
+- [#7] add German translations for docs
+### Changed
+- [#11] Add Failed-Condition to mark Errors on debug-modes  
+
 ## [v1.0.0] - 2025-10-01
 ### Added
 - release of v1.0.0 
