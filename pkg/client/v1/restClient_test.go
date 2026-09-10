@@ -617,7 +617,15 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 		// given
 		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
 
+		var requests []string
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			requests = append(requests, request.Method)
+			writer.Header().Set("content-type", "application/json")
+			if request.Method == http.MethodGet {
+				assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+				assert.NoError(t, json.NewEncoder(writer).Encode(DebugMode))
+				return
+			}
 			assert.Equal(t, http.MethodPut, request.Method)
 			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
@@ -625,13 +633,20 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 			require.NoError(t, err)
 
 			createdDebugMode := &v1.DebugMode{}
-			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+			if !assert.NoError(t, json.Unmarshal(bytes, createdDebugMode)) {
+				return
+			}
+			actualCondition := meta.FindStatusCondition(createdDebugMode.Status.Conditions, v1.ConditionLogLevelSet)
+			if assert.NotNil(t, actualCondition) {
+				assert.Equal(t, metav1.ConditionFalse, actualCondition.Status)
+			}
 
 			writer.Header().Add("content-type", "application/json")
 			_, err = writer.Write(bytes)
 
 			require.NoError(t, err)
 		}))
+		t.Cleanup(server.Close)
 
 		config := rest.Config{
 			Host: server.URL,
@@ -642,19 +657,29 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 		sClient := client.DebugMode("test")
 
 		// when
-		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, false, "", "")
+		result, err := sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, false, "", "")
 
 		// then
+		assert.Equal(t, []string{http.MethodGet, http.MethodPut}, requests)
 		require.NoError(t, err)
-		require.Len(t, DebugMode.Status.Conditions, 1)
-		require.Equal(t, metav1.ConditionFalse, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionLogLevelSet).Status)
+		require.NotNil(t, result)
+		require.Len(t, result.Status.Conditions, 1)
+		require.Equal(t, metav1.ConditionFalse, meta.FindStatusCondition(result.Status.Conditions, v1.ConditionLogLevelSet).Status)
 	})
 
-	t.Run("success condition set to true", func(t *testing.T) {
+	t.Run("should fail on status update with condition set to true", func(t *testing.T) {
 		// given
 		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
 
+		var requests []string
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			requests = append(requests, request.Method)
+			writer.Header().Set("content-type", "application/json")
+			if request.Method == http.MethodGet {
+				assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+				assert.NoError(t, json.NewEncoder(writer).Encode(DebugMode))
+				return
+			}
 			assert.Equal(t, http.MethodPut, request.Method)
 			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
@@ -662,13 +687,20 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 			require.NoError(t, err)
 
 			createdDebugMode := &v1.DebugMode{}
-			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+			if !assert.NoError(t, json.Unmarshal(bytes, createdDebugMode)) {
+				return
+			}
+			actualCondition := meta.FindStatusCondition(createdDebugMode.Status.Conditions, v1.ConditionLogLevelSet)
+			if assert.NotNil(t, actualCondition) {
+				assert.Equal(t, metav1.ConditionTrue, actualCondition.Status)
+			}
 
 			writer.WriteHeader(500)
 			writer.Header().Add("content-type", "application/json")
 			_, err = writer.Write(bytes)
 			require.NoError(t, err)
 		}))
+		t.Cleanup(server.Close)
 
 		config := rest.Config{
 			Host: server.URL,
@@ -682,9 +714,9 @@ func Test_DebugModeClient_AddOrUpdateLogLevelsSetCondition(t *testing.T) {
 		_, err = sClient.AddOrUpdateLogLevelsSet(testCtx, DebugMode, true, "Test Msg", "Test Reason")
 
 		// then
+		assert.Equal(t, []string{http.MethodGet, http.MethodPut}, requests)
 		require.Error(t, err)
-		require.Len(t, DebugMode.Status.Conditions, 1)
-		require.Equal(t, metav1.ConditionTrue, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionLogLevelSet).Status)
+		assert.ErrorContains(t, err, "failed to add or update condition")
 	})
 }
 
@@ -693,7 +725,15 @@ func Test_DebugModeClient_AddOrUpdateFailedCondition(t *testing.T) {
 		// given
 		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
 
+		var requests []string
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			requests = append(requests, request.Method)
+			writer.Header().Set("content-type", "application/json")
+			if request.Method == http.MethodGet {
+				assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+				assert.NoError(t, json.NewEncoder(writer).Encode(DebugMode))
+				return
+			}
 			assert.Equal(t, http.MethodPut, request.Method)
 			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
@@ -701,13 +741,20 @@ func Test_DebugModeClient_AddOrUpdateFailedCondition(t *testing.T) {
 			require.NoError(t, err)
 
 			createdDebugMode := &v1.DebugMode{}
-			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+			if !assert.NoError(t, json.Unmarshal(bytes, createdDebugMode)) {
+				return
+			}
+			actualCondition := meta.FindStatusCondition(createdDebugMode.Status.Conditions, v1.ConditionFailed)
+			if assert.NotNil(t, actualCondition) {
+				assert.Equal(t, metav1.ConditionFalse, actualCondition.Status)
+			}
 
 			writer.Header().Add("content-type", "application/json")
 			_, err = writer.Write(bytes)
 
 			require.NoError(t, err)
 		}))
+		t.Cleanup(server.Close)
 
 		config := rest.Config{
 			Host: server.URL,
@@ -718,19 +765,29 @@ func Test_DebugModeClient_AddOrUpdateFailedCondition(t *testing.T) {
 		sClient := client.DebugMode("test")
 
 		// when
-		_, err = sClient.AddOrUpdateFailed(testCtx, DebugMode, false, "", "")
+		result, err := sClient.AddOrUpdateFailed(testCtx, DebugMode, false, "", "")
 
 		// then
+		assert.Equal(t, []string{http.MethodGet, http.MethodPut}, requests)
 		require.NoError(t, err)
-		require.Len(t, DebugMode.Status.Conditions, 1)
-		require.Equal(t, metav1.ConditionFalse, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionFailed).Status)
+		require.NotNil(t, result)
+		require.Len(t, result.Status.Conditions, 1)
+		require.Equal(t, metav1.ConditionFalse, meta.FindStatusCondition(result.Status.Conditions, v1.ConditionFailed).Status)
 	})
 
-	t.Run("success condition set to true", func(t *testing.T) {
+	t.Run("should fail on status update with condition set to true", func(t *testing.T) {
 		// given
 		DebugMode := &v1.DebugMode{ObjectMeta: metav1.ObjectMeta{Name: "myDebugMode", Namespace: "test"}}
 
+		var requests []string
 		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+			requests = append(requests, request.Method)
+			writer.Header().Set("content-type", "application/json")
+			if request.Method == http.MethodGet {
+				assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode", request.URL.Path)
+				assert.NoError(t, json.NewEncoder(writer).Encode(DebugMode))
+				return
+			}
 			assert.Equal(t, http.MethodPut, request.Method)
 			assert.Equal(t, "/apis/k8s.cloudogu.com/v1/namespaces/test/debugmodes/myDebugMode/status", request.URL.Path)
 
@@ -738,13 +795,20 @@ func Test_DebugModeClient_AddOrUpdateFailedCondition(t *testing.T) {
 			require.NoError(t, err)
 
 			createdDebugMode := &v1.DebugMode{}
-			require.NoError(t, json.Unmarshal(bytes, createdDebugMode))
+			if !assert.NoError(t, json.Unmarshal(bytes, createdDebugMode)) {
+				return
+			}
+			actualCondition := meta.FindStatusCondition(createdDebugMode.Status.Conditions, v1.ConditionFailed)
+			if assert.NotNil(t, actualCondition) {
+				assert.Equal(t, metav1.ConditionTrue, actualCondition.Status)
+			}
 
 			writer.WriteHeader(500)
 			writer.Header().Add("content-type", "application/json")
 			_, err = writer.Write(bytes)
 			require.NoError(t, err)
 		}))
+		t.Cleanup(server.Close)
 
 		config := rest.Config{
 			Host: server.URL,
@@ -758,9 +822,9 @@ func Test_DebugModeClient_AddOrUpdateFailedCondition(t *testing.T) {
 		_, err = sClient.AddOrUpdateFailed(testCtx, DebugMode, true, "Test Error", "Test Error-Reason")
 
 		// then
+		assert.Equal(t, []string{http.MethodGet, http.MethodPut}, requests)
 		require.Error(t, err)
-		require.Len(t, DebugMode.Status.Conditions, 1)
-		require.Equal(t, metav1.ConditionTrue, meta.FindStatusCondition(DebugMode.Status.Conditions, v1.ConditionFailed).Status)
+		assert.ErrorContains(t, err, "failed to add or update condition")
 	})
 }
 

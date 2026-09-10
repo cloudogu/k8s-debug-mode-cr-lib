@@ -225,7 +225,7 @@ func (client *debugModeClient) RemoveFailed(ctx context.Context, debugMode *v1.D
 
 func (client *debugModeClient) addOrUpdateCondition(ctx context.Context, condition string, debugMode *v1.DebugMode, set bool, msg string, reason string) (*v1.DebugMode, error) {
 	conditionStatus := metav1.ConditionFalse
-	if set == true {
+	if set {
 		conditionStatus = metav1.ConditionTrue
 	}
 
